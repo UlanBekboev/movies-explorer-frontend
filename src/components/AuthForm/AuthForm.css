@@ -1,0 +1,155 @@
+.auth {
+  min-height: 700px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.auth__logo {
+  width: 38px;
+  height: 38px;
+}
+
+.auth__form {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth__content {
+  max-width: 396px;
+  width: 100%;
+}
+
+.form__button {
+  margin: 91px 0 16px 0;
+  color: #FFF;
+  text-align: center;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  border-radius: 3px;
+  background: #FF6838;
+  padding: 14px 125px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.form__button:hover {
+  opacity: 0.8;
+}
+
+.auth__container {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.auth__title {
+  margin: 40px 0 40px 0;
+  color: #000;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.form__label {
+  margin-bottom: 10px;
+  color: #A0A0A0;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.form__label_inactive {
+  display: none;
+}
+
+.form__input {
+  height: 16px;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 8px;
+  background: #F9F9F9;
+  color: #000;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.form__error {
+  opacity: 1;
+  display: block;
+  margin: 10px 0 0 0;
+  color: #ee3465;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.form__input:last-of-type {
+  margin-bottom: 0;
+}
+
+.auth__signed {
+  color: #A0A0A0;
+  text-align: center;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.auth__signed:hover {
+  opacity: 0.8;
+}
+
+.auth__link {
+  margin: 0;
+  padding: 0;
+  color: #FF6838;
+  text-align: center;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.auth__link:hover {
+  opacity: 0.8;
+}
+
+@media screen and (max-width: 500px) {
+  .form__button {
+    margin-top: 179px 0 14px 0;
+    padding: 15px 68px;
+  }
+
+  .auth__content {
+    max-width: 260px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .auth__container {
+    gap: 7px;
+  }
+
+  .auth__title {
+    align-self: center;
+    margin: 50px 0 80px 0;
+  }
+}
