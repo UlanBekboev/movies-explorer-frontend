@@ -122,6 +122,7 @@
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+  text-decoration: none;
   cursor: pointer;
   transition: 0.3s;
 }

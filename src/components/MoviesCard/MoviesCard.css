@@ -28,7 +28,25 @@
   line-height: normal;
 }
 
-.card__saved {
+.card__delete-icon {
+  margin-top: 0;
+  padding: 0 12px 0 0;
+  grid-column: 2/2;
+  grid-row: 2/3;
+  align-self: end;
+  width: 16px;
+  height: 16px;
+  background: url("../../images/delete-icon.svg") center;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.card__delete-icon:hover {
+  opacity: 0.8;
+}
+
+.card__save-icon {
   margin-top: 0;
   padding: 0 12px 0 0;
   grid-column: 2/2;
@@ -40,7 +58,7 @@
   border: none;
 }
 
-.card__saved_active {
+.card__save-icon_active {
   background: url("../../images/save_active.svg") center;
 }
 
