@@ -9,7 +9,7 @@ const Header = ({ isLoggedIn }) => {
 
   return (
     <header className={`header ${
-      !isLoggedIn || pathname === '/' ? "header__blue" : "header__light"
+      pathname === '/' ? "header__blue" : "header__light"
     }`}>
       <Link to="/" className="header__logo">
         <img src={headerLogo} alt="Логотип страницы" className="logo"/>

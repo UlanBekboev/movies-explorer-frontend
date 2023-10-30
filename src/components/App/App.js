@@ -14,11 +14,11 @@ import BurgerMenu from '../BurgerMenu/BurgerMenu';
 import Login from '../Login/Login';
 
 function App() {
-  const [isLoggedIn, setisLoggedIn] = useState(true);
+  const [isLoggedIn, setisLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
 
   const onLogin = () => {
-    setisLoggedIn(!isLoggedIn);
+    setisLoggedIn(true);
   }
 
   return (
