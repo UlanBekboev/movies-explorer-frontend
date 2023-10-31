@@ -7,7 +7,7 @@ function BurgerMenu({ onClose }) {
   return (
     <div className="burger-menu">
       <div className="burger-menu__container">
-        <img src={close} alt="" type="button" className="burger-menu__close" onClick={onClose}/>
+        <img src={close} alt="Кнопка закрыть меню" type="button" className="burger-menu__close" onClick={onClose}/>
         <nav className="burger-menu__content">
           <NavLink to="/" className={({isActive}) => `burger-menu__item ${isActive ? "burger-menu__item_active" : ""}`}>Главная</NavLink>
           <NavLink to="/movies" className={({isActive}) => `burger-menu__item ${isActive ? "burger-menu__item_active" : ""}`}>Фильмы</NavLink>

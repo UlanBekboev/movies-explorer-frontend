@@ -3,9 +3,9 @@ import Header from "../Header/Header";
 import { Link } from "react-router-dom";
 
 function Profile() {
+  
   return (
     <section className="profile">
-      <Header />
       <div className="profile__content">
         <form action="" className="profile__form form">
           <h1 className="profile__title">Привет, Виталий!</h1>
