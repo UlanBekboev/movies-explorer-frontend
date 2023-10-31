@@ -1,6 +1,8 @@
 .promo {
   padding: 82px 0 122px 0;
   background-color: #465dff;
+  max-width: 1280px;
+  margin: 0 auto;
 }
 
 .promo__container {
