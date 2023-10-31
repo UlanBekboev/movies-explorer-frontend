@@ -9,7 +9,7 @@ function Login(props) {
         button="Войти"
         question="Ещё не зарегистрированы?"
         action="Регистрация"
-        path="/sign-up"
+        path="/sign-in"
       />
     </>
   );

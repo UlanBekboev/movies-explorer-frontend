@@ -131,14 +131,14 @@
     padding: 0;
     outline: none;
     border: none;
-    background: transparent url('../../images/icon__COLOR_icon-main.svg') center / cover
+    background: transparent url('../../images/icon__COLOR_icon-main.svg') center center / cover
       no-repeat;
     cursor: pointer;
     transition: 0.3s;
   }
 
   .nav__burger-menu_light {
-    background: transparent url('../../images/icon__COLOR_icon-main_light.svg') center /
+    background: transparent url('../../images/icon__COLOR_icon-main_light.svg') center center /
       cover no-repeat;
   }
 
@@ -173,5 +173,12 @@
   .nav__burger-menu {
     width: 40px;
     height: 43px;
+    background: transparent url('../../images/icon__burger-menu_320.svg') center center /
+      cover no-repeat;
+  }
+
+  .nav__burger-menu_light {
+    background: transparent url('../../images/icon__burger-menu_320_light.svg') center center /
+      cover no-repeat;
   }
 }

@@ -21,16 +21,22 @@
   opacity: 0.6;
 }
 
-.header__blue {
+.header-blue {
   background-color: #465dff;
 }
 
-.header__light {
+.header-light {
   background-color: #fff;
 }
 
 @media screen and (max-width: 768px) {
   .header {
-    padding: 0 3.906% 0 3.906%;
+    padding: 0 30px;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .header {
+    padding: 0 14px;
   }
 }

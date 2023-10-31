@@ -98,8 +98,8 @@
 }
 
 @media screen and (max-width: 768px) { 
-  .about-project__title {
-
+  .about-project {
+    padding: 90px 50px;
   }
 
   .about-project__description {
@@ -120,7 +120,11 @@
   }
 }
 
-@media screen and (max-width: 500px) { 
+@media screen and (max-width: 650px) { 
+  .about-project {
+    padding: 70px 18px 69px;
+  }
+
   .about-project__title {
     font-size: 18px;
   }

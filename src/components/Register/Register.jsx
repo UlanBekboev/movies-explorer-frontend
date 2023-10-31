@@ -9,7 +9,7 @@ function Register(props) {
         button="Зарегистрироваться"
         question="Уже зарегистрированы?"
         action="Войти"
-        path="/sign-in"
+        path="/sign-up"
       />
     </>
   );

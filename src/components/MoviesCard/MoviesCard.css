@@ -1,26 +1,35 @@
 .card {
-  display: grid;
-  gap: 10px 24px;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
   max-width: 270px;
   max-height: 218px;
-  grid-template-columns: 218px 28px;
-  grid-template-rows: minmax(151px, 190px) 20px 27px;
+  background-color: #fdfdfd;
+  box-shadow: 0 16px 24px 0px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  width: 100%;
+}
+
+.card__container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 14px;
+}
+
+.card__flex-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0 12px;
 }
 
 .card__image {
   width: 100%;
-  grid-column: 1/3;
-  grid-row: 1/2;
-  border-radius: 10px 10px 0 0;
 }
 
 .card__description {
   margin: 0;
-  padding-left: 12px;
-  grid-column: 1/2;
-  grid-row: 2/3;
-  align-self: end;
   color: #000;
   font-size: 13px;
   font-style: normal;
@@ -30,10 +39,6 @@
 
 .card__delete-icon {
   margin-top: 0;
-  padding: 0 12px 0 0;
-  grid-column: 2/2;
-  grid-row: 2/3;
-  align-self: end;
   width: 16px;
   height: 16px;
   background: url("../../images/delete-icon.svg") center;
@@ -47,25 +52,27 @@
 }
 
 .card__save-icon {
-  margin-top: 0;
-  padding: 0 12px 0 0;
-  grid-column: 2/2;
-  grid-row: 2/3;
-  align-self: end;
-  width: 16px;
   height: 16px;
-  background: url("../../images/save8d.svg") center;
+  width: 16px;
+  padding: 0;
   border: none;
+  border-radius: 8px;
+  border: 2px solid #fff;
+  transition: opacity 0.2s linear;
+  cursor: pointer;
+  box-shadow: 0 4px 8px 0px rgba(0, 0, 0, 0.05);
+}
+
+.card__save-icon:hover {
+  opacity: 0.7;
 }
 
 .card__save-icon_active {
-  background: url("../../images/save_active.svg") center;
+  background: #2be080;
 }
 
 .card__duration {
   padding-left: 12px;
-  grid-column: 1/2;
-  grid-row: 3/3;
   align-self: start;
   color: #A0A0A0;
   font-size: 11px;

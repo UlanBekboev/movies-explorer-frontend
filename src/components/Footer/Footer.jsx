@@ -9,8 +9,22 @@ function Footer() {
       <div className="footer__container">
         <p className="footer__date">{new Date().getFullYear()}</p>
         <nav className="footer__nav">
-          <div className="footer__link">Яндекс.Практикум</div>
-          <div className="footer__link">Github</div>
+          <a
+            className="footer__link"
+            href="https://practicum.yandex.ru/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Яндекс.Практикум
+          </a>
+          <a
+            className="footer__link"
+            href="https://github.com/UlanBekboev/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Github
+          </a>
         </nav>
       </div>
     </footer>

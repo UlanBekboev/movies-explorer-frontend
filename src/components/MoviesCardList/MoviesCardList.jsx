@@ -5,8 +5,15 @@ function MoviesCardList({isSaved}) {
   return (
     <section className="movies-list">
       <ul className="movies-list__cards">
-        {isSaved && <MoviesCard />}
-        {isSaved && <MoviesCard />}
+         <MoviesCard />
+         <MoviesCard />
+         <MoviesCard />
+         <MoviesCard />
+         <MoviesCard />
+         <MoviesCard />
+         <MoviesCard />
+         <MoviesCard />
+         <MoviesCard />
         {isSaved && <MoviesCard />}
         {isSaved && <MoviesCard />}
         {isSaved && <MoviesCard />}

@@ -15,7 +15,7 @@ const Movies = () => {
     <main className="movies">
       <Header />
       <SearchForm />
-      <MoviesCardList isSaved={onSave}/>
+      <MoviesCardList isSaved={isSaved}/>
       <Footer />
     </main>
   );

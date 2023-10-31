@@ -1,3 +1,7 @@
+.profile {
+  padding-bottom: 40px;
+}
+
 .profile__content {
   display: flex;
   flex-direction: column;
@@ -75,8 +79,11 @@
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+  border: none;
   cursor: pointer;
   transition: 0.3s;
+  padding: 0;
+  background: #fff;
 }
 
 .profile__button:hover {
@@ -90,6 +97,7 @@
   font-style: normal;
   font-weight: 500;
   line-height: normal;
+  text-decoration: none;
   cursor: pointer;
   transition: 0.3s;
 }
