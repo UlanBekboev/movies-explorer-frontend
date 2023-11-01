@@ -1,4 +1,4 @@
-import "./InfoTooltip.css";
+import "./InfoTool.css";
 
 function InfoTool(props) {
   return (
