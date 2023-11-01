@@ -7,10 +7,8 @@ import Header from '../Header/Header';
 const SavedMovies = () => {
   return (
     <main className="movies">
-      <Header />
       <SearchForm />
       <MoviesCardList />
-      <Footer />
     </main>
   );
 };
