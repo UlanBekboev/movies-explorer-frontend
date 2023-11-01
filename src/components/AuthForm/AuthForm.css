@@ -56,6 +56,14 @@
   padding: 14px 177px;
 }
 
+.form__button_disabled {
+  background-color: #F9F9F9;
+  color: #C2C2C2;
+  cursor: default;
+  pointer-events: none;
+  transition: opacity 0.5s;
+}
+
 .auth__container {
   display: flex;
   gap: 6px;

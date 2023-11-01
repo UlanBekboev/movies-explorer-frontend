@@ -19,6 +19,15 @@
   justify-items: center;
 }
 
+.movies-cards__search-error {
+  color: #ee3465;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 18px;
+  text-align: center;
+}
+
 .movies-list__button {
   max-width: 1140px;
   height: 36px;
