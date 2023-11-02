@@ -1,189 +1,207 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+
 import './App.css';
-import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
-import { useState } from 'react';
-import { CurrentUserContext } from '../../context/CurrentUserContext';
+
+import CurrentUserContext from "../../contexts/CurrentUserContext";
+
+import Main from "../Main/Main";
+import Movies from "../Movies/Movies";
+import SavedMovies from "../SavedMovies/SavedMovies";
+import Profile from "../Profile/Profile";
+import Register from "../Register/Register";
+import Login from "../Login/Login";
+import PageNotFound from "../PageNotFound/PageNotFound";
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
-import { mainApi } from "../../utils/MainApi";
-import Header from '../Header/Header.jsx';
-import Main from '../Main/Main.jsx';
-import Footer from '../Footer/Footer';
-import Movies from '../Movies/Movies';
-import Profile from '../Profile/Profile';
-import Register from '../Register/Register';
-import PageNotFound from '../PageNotFound/PageNotFound';
-import Login from '../Login/Login';
-import InfoTooltip from "../InfoTool/InfoTool"; 
+import InfoTool from "../InfoTool/InfoTool";
+import Header from "../Header/Header";
+import Footer from "../Footer/Footer";
 
 import {
-  UNAUTHORIZED_ERROR,
-  BAG_REQUEST_ERROR,
-  UNAUTHORIZED_LOGIN,
-  BAG_REQUEST_LOGIN,
-  CONFLICT_ERROR,
-  OK_STATUS_PROFILE,
-  OK_STATUS_REGISTER,
-  CONFLICT_REGISTER,
-  INTERNAL_SERVER,
-  INTERNAL_SERVER_ERROR,
-} from "../../utils/constants";
+  register,
+  authorize,
+  getContent,
+  updateUserInfo,
+  saveMovie,
+  deleteMovie,
+  getSavedMovies
+} from "../../utils/MainApi";
 
-
-function App() {
+const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
-  const [isLoggedIn, setisLoggedIn] = useState(false);
-  const [isOpenPopup, setIsOpenPopup] = useState(false);
-  const [status, setStatus] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [savedMovies, setSavedMovies] = useState([]);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
 
   const navigate = useNavigate();
-  const path = useLocation().pathname;
+  const location = useLocation();
 
-  React.useEffect(() => {
-    const token = localStorage.getItem("userId");
-    if (token) {
-      mainApi
-        .getContent()
-        .then((res) => {
-          if (res) {
-            setisLoggedIn(true);
-            //localStorage.removeItem("movies");
-          } else {
-            setisLoggedIn(false);
-          }
-          navigate(path);
-        })
-        .catch((err) => {
-          console.log(`Ошибка: ${err}`);
-        });
-    }
-  }, []);
+  useEffect(() => {
+    handleTokenCheck();
+  }, [isLoggedIn])
 
-  React.useEffect(() => {
-    if (isLoggedIn) {
-      mainApi
-        .getUserInfo()
-        .then((data) => {
-          setCurrentUser(data);
-        })
-        .catch((err) => {
-          console.log(`Ошибка: ${err}`);
-        });
-      mainApi
-        .getSavedMovies()
-        .then((movies) => {
-          setSavedMovies(movies.reverse());
-        })
-        .catch((err) => {
-          console.log(`Ошибка: ${err}`);
-        });
-    }
-  }, [isLoggedIn]);
-
-  function handleRegisterSubmit(name, email, password) {
-    mainApi
-      .register(name, email, password)
+  const handleRegistration = async ({ name, email, password }) => {
+    return register({ name, email, password })
       .then(() => {
-        setIsOpenPopup(true);
-        setStatus(OK_STATUS_REGISTER);
-        handleLoginSubmit(email, password);
+        handleAuthorization({ email, password });
       })
-      .catch((err) => {
-        setIsOpenPopup(true);
-        err === BAG_REQUEST_ERROR && setStatus(UNAUTHORIZED_LOGIN);
-        err === CONFLICT_ERROR && setStatus(CONFLICT_REGISTER);
-        console.log(`Ошибка: ${err}`);
+      
+      .catch(error => {
+          setPopupMessage(error);
+          setIsPopupOpen(true);
       });
+  };
+
+  const handleAuthorization = async (data) => {
+    return authorize(data)
+      .then((data) => {
+        setIsLoggedIn(true);
+        navigate('/movies', {replace: true});
+        Promise.all([getContent(), getSavedMovies()])
+          .then(([userInfo, userMovies]) => {
+            setCurrentUser(userInfo);
+            localStorage.setItem('savedMovies', JSON.stringify(userMovies));
+            setSavedMovies(userMovies);
+          })
+          .catch(error => {
+            console.log(error);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          })
+      })
+      .catch(error => {
+        setPopupMessage(error);
+        setIsPopupOpen(true);
+      });
+  };
+
+
+  const handleSaveMovie = (movie) => {
+    const handledMovie = savedMovies.find(item => {
+      return item.movieId === movie.id
+    });
+    const isLiked = Boolean(handledMovie);
+    const id = handledMovie ? handledMovie._id : null;
+    if (isLiked) {
+      deleteMovie(id)
+        .then((card) => {
+          const updatedSavedMovies = savedMovies.filter(item => card._id !== item._id);
+          localStorage.setItem('savedMovies', updatedSavedMovies);
+          setSavedMovies(updatedSavedMovies);
+        })
+        .catch(error => {
+          setPopupMessage(error);
+          setIsPopupOpen(true);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      saveMovie(movie)
+        .then((newSavedMovie) => {
+          setSavedMovies((prev) => [...prev, newSavedMovie]);
+        })
+        .catch((error) => {
+          setPopupMessage(error);
+          setIsPopupOpen(true);
+        })
+    }
   }
 
-  function handleLoginSubmit(email, password) {
-    mainApi
-      .login(email, password)
-      .then((res) => {
-        setisLoggedIn(true);
-        navigate("/movies", { replace: true });
+  const handleDeleteMovie = (movie) => {
+    setIsLoading(true);
+    deleteMovie(movie._id)
+      .then((card) => {
+        const updatedSavedMovies = savedMovies.filter(item => card._id !== item._id);
+        localStorage.setItem('savedMovies', updatedSavedMovies);
+        setSavedMovies(prev => updatedSavedMovies);
       })
-      .catch((err) => {
-        setIsOpenPopup(true);
-        err === UNAUTHORIZED_ERROR && setStatus(UNAUTHORIZED_LOGIN);
-        err === BAG_REQUEST_ERROR && setStatus(BAG_REQUEST_LOGIN);
-        console.log(`Ошибка: ${err}`);
+      .catch(error => {
+        setPopupMessage(error);
+        setIsPopupOpen(true);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-  }
+  };
 
-  function handleUpdateUser({ name, email }) {
-    mainApi
-      .updateUserInfo({ name, email })
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+    setPopupMessage('');
+  };
+
+  const handleUpdateUser = (newUserInfo) => {
+    setIsLoading(true);
+    updateUserInfo(newUserInfo)
       .then((data) => {
         setCurrentUser(data);
-        setIsOpenPopup(true);
-        setStatus(OK_STATUS_PROFILE);
+        setPopupMessage('Профиль успешно редактирован!');
+        setIsPopupOpen(true);
       })
-      .catch((err) => {
-        setIsOpenPopup(true);
-        err === INTERNAL_SERVER_ERROR && setStatus(INTERNAL_SERVER);
-        console.log(`Ошибка: ${err}`);
-      });
-  }
-
-  function handleMovieLike(card) {
-    mainApi
-      .postSavedMovie(card)
-      .then((movie) => {
-        setSavedMovies([movie, ...savedMovies]);
+      .catch(error => {
+        setPopupMessage('При обновлении профиля произошла ошибка.');
+        setIsPopupOpen(true);
       })
-      .catch((err) => {
-        console.log(`Ошибка: ${err}`);
+      .finally(() => {
+        setIsLoading(false);
       });
-  }
+  };
 
-  function handleMovieDelete(card) {
-    mainApi
-      .deleteSavedMovie(card._id)
-      .then(() => {
-        setSavedMovies((movies) =>
-          movies.filter((item) => item._id !== card._id)
-        );
+  const handleSignOut = () => {
+    localStorage.clear();
+    setCurrentUser({});
+    setPopupMessage('');
+    setSavedMovies([]);
+    setIsLoggedIn(false);
+    navigate('/', {replace: true});;
+  };
+
+  const handleTokenCheck = () => {
+    const path = location.pathname;
+    const token = localStorage.getItem('userId');
+    if (token) {
+      getContent()
+      .then((data) => {
+        setIsLoggedIn(true);
+        setCurrentUser(data)
+        navigate(path, {replace: true});;
       })
-      .catch((err) => {
-        console.log(`Ошибка: ${err}`);
-      });
-  }
-
-  function handleSignOutSubmit() {
-    localStorage.removeItem("userId");
-    localStorage.removeItem("moviesList");
-    localStorage.removeItem("movieSearch");
-    localStorage.removeItem("shortMovies");
-    localStorage.removeItem("movies");
-    setisLoggedIn(false);
-    navigate("/");
-  }
-
-  function closePopup() {
-    setIsOpenPopup(false);
-  }
+      .catch((err) => console.log(err));
+    getSavedMovies()
+      .then((movies) => {
+        setSavedMovies(movies)
+      })
+      .catch((err) => console.log(err));
+    }
+    
+  };
 
   return (
     <div className="app">
       <CurrentUserContext.Provider value={currentUser}>
         <Routes>
-          <Route path="/" element={
-            <>
-              <Header isLoggedIn={isLoggedIn}/> 
-              <Main />
+          <Route exact path='/' element={
+             <>
+              <Header isLoggedIn={isLoggedIn}/>
+              <Main isLoggedIn={isLoggedIn} />
               <Footer />
-            </>
-          }/>
+             </>
+          } /> 
+          
           <Route path="/movies" element={
             <>
               <Header isLoggedIn={isLoggedIn}/>
               <ProtectedRoute
-                element={Movies}
+                 component={Movies}
                 isLoggedIn={isLoggedIn}
                 savedMovies={savedMovies}
-                onMovieDelete={handleMovieDelete}
-                handleMovieLike={handleMovieLike}
+                isLoading={isLoading}
+                onDelete={handleDeleteMovie}
+                setPopupMessage={setPopupMessage}
+                setIsPopupOpen={setIsPopupOpen}
               />
               <Footer />
             </>
@@ -192,39 +210,39 @@ function App() {
             <>
               <Header isLoggedIn={isLoggedIn}/>
               <ProtectedRoute
-                element={savedMovies}
-                loggedIn={isLoggedIn}
-                savedMovies={savedMovies}
-                onMovieDelete={handleMovieDelete}
+                component={SavedMovies}
+                isLoggedIn={isLoggedIn}
+                isLoading={isLoading}
+                onDelete={handleDeleteMovie}
+                setPopupMessage={setPopupMessage}
+                setIsPopupOpen={setIsPopupOpen}
               />
               <Footer />
             </>
           }/>
           <Route path="/profile" element={
             <ProtectedRoute
-              element={Profile}
+              component={Profile}
               isLoggedIn={isLoggedIn}
-              onOpenPopup={setIsOpenPopup}
               onUpdateUser={handleUpdateUser}
-              onSignOut={handleSignOutSubmit}
+              onSignOut={handleSignOut}
             />
           }/>
           <Route path="/sign-in" element={
-            <Login 
-            onLogin={handleLoginSubmit} isLoggedIn={isLoggedIn}/>
-          }/>
-          <Route path="/sign-up" element={
-            <Register
-              isLoggedIn={isLoggedIn}
-              onRegister={handleRegisterSubmit}
-              onSignOut={setIsOpenPopup}
-            />
-          }/>
+            <Login onLogin={handleAuthorization} />
+           } />          
+          <Route exact path='/sign-up' element={
+            <Register onRegister={handleRegistration} />
+          } />
           <Route path="*" element={
             <PageNotFound />}>
           </Route>
         </Routes>
-        <InfoTooltip text={status} isOpen={isOpenPopup} onClose={closePopup} />
+        <InfoTool
+          isOpen={isPopupOpen}
+          onClose={handleClosePopup}
+          message={popupMessage}
+        />
       </CurrentUserContext.Provider>
     </div>
   );

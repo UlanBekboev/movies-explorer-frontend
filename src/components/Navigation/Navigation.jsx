@@ -16,7 +16,7 @@ const Navigation = ({ isLoggedIn }) => {
   }
 
   return (
-      !isLoggedIn ? (
+      isLoggedIn ? (
         <nav className="nav">
           <ul className="nav__content">
             <li>

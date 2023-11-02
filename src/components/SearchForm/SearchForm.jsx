@@ -1,52 +1,55 @@
-import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import searchLogo from '../../images/find.svg';
+import { useEffect } from 'react';
+import './SearchForm.css';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
-import "./SearchForm.css";
+import useFormValidation from '../../hooks/useFormValidation';
+import { useLocation } from 'react-router-dom';
+import searchLogo from '../../images/find.svg';
 
-function SearchForm({ onMoviesSearch, onMoviesFilter, isShortMovies }) {
-  const { pathname } = useLocation();
-  const [search, setSearch] = useState("");
-  const [isError, setIsError] = useState(false);
-  const [errorText, setErrorText] = useState("");
+const SearchForm = ({
+  onSearchMovies,
+  onFilter,
+  disabled,
+  isSavedMoviesPage,
+  shortMovies,
+}) => {
+  const { enteredValues, handleChange, resetForm, isFormValid } = useFormValidation();
+  const location = useLocation();
+
+  function handleFormSubmit(e) {
+    e.preventDefault();
+    onSearchMovies(enteredValues.searchRequest, isFormValid, shortMovies);
+  }
+
+  function handleSavedMoviesFormSubmit(e) {
+    e.preventDefault()
+    onSearchMovies(enteredValues.searchRequest, shortMovies, resetForm);
+  }
 
   useEffect(() => {
-    if (pathname === "/movies") {
-      setSearch(localStorage.getItem("movieSearch"));
+    if (location.pathname === '/movies' && localStorage.getItem('movieSearch')) {
+      const searchValue = localStorage.getItem('movieSearch');
+      enteredValues.searchRequest = searchValue;
     }
-  }, [pathname]);
-
-  function handleInputChange(evt) {
-    setSearch(evt.target.value);
-  }
-
-  function handleSubmit(evt) {
-    evt.preventDefault();
-    if (search !== "") {
-      onMoviesSearch(search);
-      setIsError(false);
-      setErrorText("");
-    } else {
-      onMoviesSearch(search);
-      setIsError(true);
-      setErrorText("Запрос не может быть пустым");
-    }
-  }
+  }, [location]);
 
   return (
-    <section className="search-form">
-      <form className="search-form__container" onSubmit={handleSubmit}>
+    <section className='search-form'>  
+      <form className='search__form__container' name='search-saved-movie-form' onSubmit={handleSavedMoviesFormSubmit} noValidate>
         <input
-          className="search-form__input"
-          placeholder="Фильм"
-          type="text"
-          name="movie"
-          id="movie"
-          value={search || ""}
-          onChange={handleInputChange}
+          type='text'
+          placeholder='Фильм'
+          className='search-form__input'
           required
+          name='searchRequest'
+          disabled={disabled}
+          value={enteredValues.searchRequest || ''}
+          onChange={handleChange}
         />
-        <button type="submit" className="search-form__button">
+        <button
+          type='submit'
+          className='search-form__button'
+          disabled={disabled}
+        >
           <img
             className="search-form__logo"
             src={searchLogo}
@@ -54,13 +57,10 @@ function SearchForm({ onMoviesSearch, onMoviesFilter, isShortMovies }) {
           />
         </button>
       </form>
-      {isError && <span className="search-form__error">{errorText}</span>}
-      <FilterCheckbox
-        onMoviesFilter={onMoviesFilter}
-        isShortMovies={isShortMovies}
-      />
+
+      <FilterCheckbox isMovieFilter={shortMovies} onFilter={onFilter} disabled={disabled} />
     </section>
-  );
-}
+  )
+};
 
 export default SearchForm;

@@ -1,70 +1,66 @@
 .popup {
+  display: flex;
+  visibility: hidden;
   opacity: 0;
-  display: none;
-  flex-direction: column;
+  transition: opacity 0.8s linear;
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
   justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.5);
-  width: 100%;
-  height: 100%;
   position: fixed;
   top: 0;
+  right: 0;
+  bottom: 0;
   left: 0;
-  transition: opacity 0.5s ease;
 }
 
 .popup_opened {
-  display: flex;
   opacity: 1;
+  visibility: visible;
 }
 
 .popup__container {
-  width: 100%;
-  max-width: 300px;
-  min-height: 120px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
   background-color: #fff;
-}
-
-.popup__text {
-  font-size: 22px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
-  margin: 0 0 35px;
-  padding: 0;
-  text-align: center;
+  max-width: 50%;
+  width: 100%;
   color: #000;
+  box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  padding: 34px 36px 37px;
+  box-sizing: border-box;
+  position: fixed;
+  top: 50px;
+  text-align: center;
 }
 
-.popup__button-close {
-  width: 22px;
-  min-height: 22px;
-  margin: 10px;
-  align-self: flex-end;
-  outline: none;
-  border: none;
-  background: transparent url("../../images/Close-Icon.svg") center center /
-    cover no-repeat;
-  transition: opacity 0.2s linear;
-}
-
-.popup__button-close:hover {
-  opacity: .7;
-  cursor: pointer;
-}
-
-@media all and (max-width: 540px) {
+@media screen and (max-width: 480px) {
   .popup__container {
-    max-width: 240px;
-  }
+    max-width: 282px;
+    padding: 25px 22px;
 
-  .popup__text {
-    max-width: 220px;
-    font-size: 18px;
+  }
+}
+
+.popup__close {
+  width: 32px;
+  height: 32px;
+  background: transparent url("../../images/Close-Icon.svg") center no-repeat;
+  border: none;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  transition: 0.3s ease;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.popup__close:hover {
+  opacity: 0.6;
+}
+
+@media screen and (max-width: 600px) {
+  .popup__close {
+    width: 20px;
+    height: 20px;
+    right: 0;
   }
 }

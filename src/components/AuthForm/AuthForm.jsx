@@ -11,29 +11,9 @@ function AuthForm(props) {
         <Link to="/" className="auth__logo-link">
           <img src={logo} alt="Логотип страницы" className="auth__logo" />
         </Link>
-        <form action="" onSubmit={props.submit} disabled={props.isValid ? true : false} className="auth__form form">
+        <form onSubmit={props.submit} disabled={props.isValid ? true : false} className="auth__form form">
           <h1 className="auth__title">{props.title}</h1>
-          <label
-            className={`${
-              pathname === "/sign-up" ? "form__label" : "form__label_inactive"
-            }`}
-          >
-            Имя
-          </label>
-          <input
-            onChange={props.onChange}
-            placeholder="Имя"
-            name="name"
-            type="text"
-            value={props.name || ""}
-            minLength={2}
-            maxLength={30}
-            required
-            autoComplete="off"
-            className={`${
-              pathname === "/sign-up" ? "form__input" : "form__input_inactive"
-            }`}
-          />
+          {props.nameInput}
           <label htmlFor="" className="form__label">
             E-mail
           </label>
@@ -69,7 +49,7 @@ function AuthForm(props) {
           <button
             type="submit"
             className={`form__button ${
-              pathname === "/sign-in" ? "form__button-enter" : ""
+              pathname === "/sign-in" && "form__button-enter"
             } ${props.isValid ? "" : "form__button_disabled"}`}
           >
             {props.action}

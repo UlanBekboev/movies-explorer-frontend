@@ -89,7 +89,9 @@
 }
 
 .form__label_inactive {
-  display: none;
+  visibility: hidden;
+  position: absolute;
+  left: -9999px;
 }
 
 .form__input {
@@ -108,7 +110,9 @@
 }
 
 .form__input_inactive {
-  display: none;
+  visibility: hidden;
+  position: absolute;
+  left: -9999px;
 }
 
 .form__error {

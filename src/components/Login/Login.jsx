@@ -5,14 +5,14 @@ import useFormValidation from "../../hooks/useFormValidation";
 
 
 function Login(props) {
-  const { values, handleChange, errors, isValid } = useFormValidation();
+  const { enteredValues, handleChange, errors, isFormValid } = useFormValidation();
 
   function handleSubmit(evt) {
     evt.preventDefault();
-    props.onLogin(values);
+    props.onLogin(enteredValues);
   }
 
-  if (props.loggedIn) {
+  if (props.isLoggedIn) {
     return <Navigate to="/movies" replace />;
   }
 
@@ -20,14 +20,14 @@ function Login(props) {
   return (
     <>
       <AuthForm
-        loggedIn={props.loggedIn}
+        isLoggedIn={props.isLoggedIn}
         onEmailChange={handleChange}
         onPasswordChange={handleChange}
-        onSubmit={handleSubmit}
-        email={values.email}
-        password={values.password}
+        submit={handleSubmit}
+        email={enteredValues.email}
+        password={enteredValues.password}
         error={errors.email || errors.password}
-        isValid={isValid}
+        isValid={true}
         title="Рады видеть!"
         action="Войти"
         question="Ещё не зарегистрированы?"

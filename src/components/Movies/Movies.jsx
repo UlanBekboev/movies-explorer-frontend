@@ -1,133 +1,135 @@
-import "./Movies.css";
-import React, { useState, useEffect } from "react";
-import SearchForm from "../SearchForm/SearchForm";
-import MoviesCardList from "../MoviesCardList/MoviesCardList";
-import { moviesApi } from "../../utils/MoviesApi";
-import { SHORT_DURATION } from "../../utils/constants";
+import React, { useState, useEffect } from 'react';
+import MoviesCardList from '../MoviesCardList/MoviesCardList';
+import SearchForm from '../SearchForm/SearchForm';
+import Preloader from '../Preloader/Preloader';
+import { useLocation } from 'react-router-dom';
 
-function Movies({ handleMovieLike, onMovieDelete, savedMovies }) {
-  const [isLoading, setIsLoading] = useState(false);
-  //найденные по запросу фильмы
+import './Movies.css';
+
+import moviesApi from '../../utils/MoviesApi';
+
+import { filterMovies, filterShortMovies } from '../../utils/utils';
+
+const Movies = ({
+  isLoggedIn,
+  onLoading,
+  savedMovies,
+  onSave,
+  isLoading,
+  setPopupMessage,
+  setIsPopupOpen
+}) => {
+  const [shortMovies, setShortMovies] = useState(false);
   const [initialMovies, setInitialMovies] = useState([]);
-  //отфильтрованные короткометражки
-  const [foundShortMovies, setFoundShortMovies] = useState([]);
-  //активность чекбокса короткометражек
-  const [isShortMovies, setIsShortMovies] = useState(false);
-  //ошибка от сервера
-  const [isError, setIsError] = useState(false);
-  const [isNotFound, setIsNotFound] = useState(false);
+  const [filteredMovies, setFilteredMovies] = useState([]);
+  const [notFound, setNotFound] = useState(false);
+  const [isAllMovies, setIsAllMovies] = useState([]);
+  const location = useLocation();
 
-  function handleFilterMovies(movies, searchName) {
-    const search = searchName.toLowerCase().trim();
-    const result = movies.filter((movie) => {
-      const movieNameRU = String(movie.nameRU).toLowerCase().trim();
-      const movieNameEN = String(movie.nameEN).toLowerCase().trim();
-      return movieNameRU.includes(search) || movieNameEN.includes(search);
-    });
-    return result;
-  }
-
-  function handleFilterMoviesDuration(movies) {
-    return movies.filter((movie) => movie.duration <= SHORT_DURATION);
-  }
-
-  function handleSearchSubmit(movies, searchName, isShort) {
-    const moviesList = handleFilterMovies(movies, searchName);
-    moviesList.length === 0 ? setIsNotFound(true) : setIsNotFound(false);
-    setInitialMovies(moviesList);
-    setFoundShortMovies(
-      isShort ? handleFilterMoviesDuration(moviesList) : moviesList
-    );
-    localStorage.setItem("movies", JSON.stringify(movies));
-    localStorage.setItem("moviesList", JSON.stringify(moviesList));
-  }
-
-  function handleGetMovies(search) {
-    moviesApi
-      .getMovies()
-      .then((data) => {
-        handleSearchSubmit(data, search, isShortMovies);
-        setIsError(false);
-      })
-      .catch((err) => {
-        setIsError(true);
-        console.log(err);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }
-
-  function handleMoviesSearch(search) {
-    localStorage.setItem("movieSearch", search);
-    localStorage.setItem("shortMoviesCheckbox", isShortMovies);
-
-    if (localStorage.getItem("movies")) {
-      handleSearchSubmit(
-        JSON.parse(localStorage.getItem("movies")),
-        search,
-        isShortMovies
-      );
+  const handleSetFilteredMovies = (movies, userQuery, shortMoviesCheckbox) => {
+    const moviesList = filterMovies(movies, userQuery, false);
+    if (moviesList.length === 0) {
+      setNotFound(true);
+      setPopupMessage('Ничего не найдено.');
+      setIsPopupOpen(true);
     } else {
-      setIsLoading(true);
-      handleGetMovies(search);
+      setNotFound(false);
+    }
+    setInitialMovies(moviesList);
+    setFilteredMovies(
+      shortMoviesCheckbox ? filterShortMovies(moviesList) : moviesList
+    );
+    localStorage.setItem('movies', JSON.stringify(moviesList));
+  }
+
+  const handleSearchSubmit = (inputValue) => {
+    if (inputValue.trim().length === 0) {
+      setPopupMessage('Нужно ввести ключевое слово');
+      setIsPopupOpen(true);
+      return;
+    }
+
+    localStorage.setItem('movieSearch', inputValue);
+    localStorage.setItem('shortMovies', shortMovies);
+
+    if (isAllMovies.length === 0) {
+      onLoading(true);
+      moviesApi
+        .getMovies()
+        .then(movies => {
+          localStorage.setItem('allMovies', JSON.stringify(movies));
+          setIsAllMovies(movies);
+          handleSetFilteredMovies(
+            movies,
+            inputValue,
+            shortMovies
+          );
+        })
+        .catch((error) => {
+          setPopupMessage(error);
+          setIsPopupOpen(true);
+        })
+        .finally(() => onLoading(false));
+    } else {
+      handleSetFilteredMovies(isAllMovies, inputValue, shortMovies);
     }
   }
 
-  useEffect(() => {
-    localStorage.getItem("movieSearch")
-      ? foundShortMovies.length === 0
-        ? setIsNotFound(true)
-        : setIsNotFound(false)
-      : setIsNotFound(false);
-  }, [foundShortMovies]);
-
-  function handleShortMovies() {
-    setIsShortMovies(!isShortMovies);
-    localStorage.setItem("shortMoviesCheckbox", !isShortMovies);
-    !isShortMovies
-      ? handleFilterMoviesDuration(initialMovies).length === 0
-        ? setFoundShortMovies(handleFilterMoviesDuration(initialMovies))
-        : setFoundShortMovies(handleFilterMoviesDuration(initialMovies))
-      : setFoundShortMovies(initialMovies);
+  const handleShortFilms = () => {
+    setShortMovies(!shortMovies);
+    if (!shortMovies) {
+      setFilteredMovies(filterShortMovies(initialMovies));
+      if (filterMovies.length === 0) {
+        setNotFound(true);
+      }
+    } else {
+      setFilteredMovies(initialMovies);
+    }
+    localStorage.setItem('shortMovies', !shortMovies);
   }
 
   useEffect(() => {
-    if (localStorage.getItem("moviesList")) {
-      const movies = JSON.parse(localStorage.getItem("moviesList"));
+    if (localStorage.getItem('shortMovies') === 'true') {
+      setShortMovies(true);
+    } else {
+      setShortMovies(false);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    if (localStorage.getItem('movies')) {
+      const movies = JSON.parse(
+        localStorage.getItem('movies')
+      );
       setInitialMovies(movies);
-      localStorage.getItem("shortMoviesCheckbox") === "true"
-        ? setFoundShortMovies(handleFilterMoviesDuration(movies))
-        : setFoundShortMovies(movies);
+      if (
+        localStorage.getItem('shortMovies') === 'true'
+      ) {
+        setFilteredMovies(filterShortMovies(movies));
+      } else {
+        setFilteredMovies(movies);
+      }
     }
-  }, []);
-
-  useEffect(() => {
-    localStorage.getItem("shortMoviesCheckbox") === "true"
-      ? setIsShortMovies(true)
-      : setIsShortMovies(false);
-  }, []);
+  }, [location]);
 
   return (
-    <main className="movies">
-      <SearchForm
-        onMoviesSearch={handleMoviesSearch}
-        onMoviesFilter={handleShortMovies}
-        isShortMovies={isShortMovies}
-      />
-      <MoviesCardList
-        savedMovies={savedMovies}
-        cards={foundShortMovies}
-        isSavedMovies={false}
-        isLoading={isLoading}
-        isError={isError}
-        isNotFound={isNotFound}
-        onMovieSave={handleMovieLike}
-        onMovieDelete={onMovieDelete}
-        buttonMore={true}
-      />
-    </main>
-  );
-}
+    <section className='movies'>
+        <SearchForm
+          onSearchMovies={handleSearchSubmit}
+          onFilter={handleShortFilms}
+          shortMovies={shortMovies}
+        />
+        {isLoading && (
+          <Preloader />
+        )}
+        {!isLoading && <MoviesCardList
+          isSavedMoviesPage={false}
+          movies={filteredMovies}
+          savedMovies={savedMovies}
+          onSave={onSave}
+        />}
+    </section>
+  )
+};
 
 export default Movies;

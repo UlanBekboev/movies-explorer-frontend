@@ -1,45 +1,26 @@
-import "./Profile.css";
-import React, { useState, useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { CurrentUserContext } from "../../context/CurrentUserContext";
-import useFormValidation from "../../hooks/useFormValidation";
+import React, { useContext, useEffect } from 'react';
+import './Profile.css';
+import useFormValidation from '../../hooks/useFormValidation';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
 
-function Profile(props) {
+const Profile = ({ onUpdateUser, onSignOut, loggedIn }) => {
   const currentUser = useContext(CurrentUserContext);
+  const { enteredValues, handleChange, isFormValid, resetForm } = useFormValidation();
 
-  const [savedIn, setSavedIn] = useState(false);
-  const [isAvailable, setIsAvailable] = useState("disabled");
-  const [previosValue, setPreviosValue] = useState(false);
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
-  const { values, handleChange, errors, isValid, resetForm } =
-    useFormValidation();
+    onUpdateUser({
+      name: enteredValues.name,
+      email: enteredValues.email,
+    });
+  };
 
   useEffect(() => {
-    if (currentUser) {
-      resetForm(currentUser);
-    }
+    currentUser ? resetForm(currentUser) : resetForm();
   }, [currentUser, resetForm]);
 
-  function handleSaveClick() {
-    setSavedIn(true);
-    setIsAvailable();
-  }
-
-  function handleSubmit(evt) {
-    evt.preventDefault();
-    props.onUpdateUser({ name: values.name, email: values.email });
-  }
-
-  useEffect(() => {
-    if (
-      currentUser.name === values.name &&
-      currentUser.email === values.email
-    ) {
-      setPreviosValue(true);
-    } else {
-      setPreviosValue(false);
-    }
-  }, [values, currentUser]);
+  const isValueSameAsWas = (!isFormValid || (currentUser.name === enteredValues.name && currentUser.email === enteredValues.email));
 
   return (
     <section className="profile">
@@ -51,14 +32,13 @@ function Profile(props) {
           </label>
           <input
             className="profile__input"
-            value={values.name || ""}
+            value={enteredValues.name || ""}
             type="text"
             name="name"
             minLength="2"
             maxLength="40"
             placeholder="Имя"
             onChange={handleChange}
-            disabled={isAvailable}
             required
           />
         </div>
@@ -68,54 +48,37 @@ function Profile(props) {
           </label>
           <input
             className="profile__input"
-            value={values.email || ""}
+            value={enteredValues.email || ""}
             pattern="^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$"
             type="email"
             name="email"
             placeholder="Email"
             onChange={handleChange}
-            disabled={isAvailable}
             required
           />
         </div>
-        {!savedIn ? (
-            <div className="profile__container">
-              <Link
-                to="/profile"
-                className="profile__button"
-                onClick={handleSaveClick}
-              >
-                Редактировать
-              </Link>
-              <Link
-                className="profile__sign-link profile__exit-btn"
-                to="/"
-                onClick={props.onSignOut}
-              >
-                Выйти из аккаунта
-              </Link>
-            </div>
-          ) : (
-            <div className="profile__container">
-              <span className="profile__error">
-                {errors.name || errors.email}
-              </span>
-              <button
-                disabled={!isValid ? true : false}
-                className={`profile__submit-button ${
-                  !isValid || previosValue
-                    ? "profile__submit-button_disabled"
-                    : ""
-                }`}
-                type="submit"
-              >
-                Сохранить
-              </button>
-            </div>
-          )}
+        <div className="profile__container">
+            <button
+              className='profile__button'
+              type='submit'
+              disabled={isValueSameAsWas}
+            >
+              Редактировать
+            </button>
+            <button
+              className='profile__sign-link profile__exit-btn'
+              type='button'
+              onClick={() => onSignOut()}
+            >
+              Выйти из аккаунта
+            </button>
+        </div>
       </form>
     </section>
-  );
-}
+  )
+};
 
 export default Profile;
+
+
+

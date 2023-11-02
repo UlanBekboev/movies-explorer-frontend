@@ -1,20 +1,14 @@
-import "./InfoTool.css";
+import './InfoTool.css';
 
-function InfoTool(props) {
+const InfoTool = ({ isOpen, onClose, message }) => {
   return (
-    <section className={`popup ${props.isOpen && "popup_opened"}`}>
+    <div className={`popup ${isOpen && 'popup_opened'}`}>
       <div className="popup__container">
-        <button
-          className="popup__button-close"
-          type="button"
-          onClick={props.onClose}
-        />
-        <p className="popup__text">
-          {props.text}
-        </p>
+        <button type="button" className="popup__close" onClick={onClose} />
+        <p>{JSON.stringify(message)}</p>
       </div>
-    </section>
+    </div>
   );
-}
+};
 
 export default InfoTool;

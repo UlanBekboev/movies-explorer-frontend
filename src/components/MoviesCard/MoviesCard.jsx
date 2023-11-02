@@ -1,31 +1,50 @@
+import { useState, useEffect } from 'react';
 import './MoviesCard.css';
-import film from '../../images/pic__COLOR_pic.svg';
-import { useLocation } from 'react-router-dom';
+import { convertMinToHours } from '../../utils/utils';
+import useScreenWidth from '../../hooks/useScreenWidth';
 
-function MoviesCard() {
-  const { pathname } = useLocation();
+const MoviesCard = ({
+  isSavedMoviesPage,
+  movie,
+  onSave,
+  onDelete,
+  saved
+}) => {
+  const screenWidth = useScreenWidth();
+  const handleSaveCard = () => {
+    onSave(movie);
+  };
 
-  const handleSave = () => {
-    const element = document.querySelector(".card__save-icon");
-    element.classList.toggle("card__save-icon_active");
-  }
-  
+  const handleDeleteCard = () => {
+    onDelete(movie);
+  };
+
   return (
-    <li className="card">
-      <img src={film} alt="фильм 33 слова о дизайне" className="card__image" />
-      <div className="card__container">
+    <div className='card'>
+      <a href={movie.trailerLink} className="card__link" target="_blank" rel="noreferrer">
+        <img
+          src={isSavedMoviesPage ?
+            movie.image :
+            `https://api.nomoreparties.co/${movie.image.url}`
+          }
+          alt={`Обложка фильма: ${movie.nameRU}`}
+          className='card__image'
+        />
+      </a>
+      <div className='card__container'> 
         <div className="card__flex-row">
-          <p className="card__description">33 слова о дизайне</p>
-          {pathname === '/saved-movies' ? (
-            <button type="button" className="card__delete-icon"></button>
-          ) : (
-            <button type="button" onClick={handleSave} className="card__save-icon"></button>
-          )}
-        </div>
-        <div className="card__duration">1ч42м</div>
+          <p className="card__description">{movie.nameRU}</p>
+          {saved && !isSavedMoviesPage ?
+            <button type='button' className='card__save-icon' onClick={handleSaveCard} /> : (
+            <button className='card__delete-icon' type='button' onClick={handleDeleteCard} />
+            )
+          }
+        </div> 
+        <span className='card__duration'>{convertMinToHours(movie.duration)}</span>
       </div>
-    </li>
+      
+    </div>
   )
-}
+};
 
 export default MoviesCard;
