@@ -1,50 +1,63 @@
-import { useState, useEffect } from 'react';
+import React, { useEffect, useState } from "react";
 import './MoviesCard.css';
-import { convertMinToHours } from '../../utils/utils';
-import useScreenWidth from '../../hooks/useScreenWidth';
+import { durationConverter } from "../../utils/utils";
 
-const MoviesCard = ({
-  isSavedMoviesPage,
-  movie,
-  onSave,
-  onDelete,
-  saved
-}) => {
-  const screenWidth = useScreenWidth();
-  const handleSaveCard = () => {
-    onSave(movie);
-  };
+function MoviesCard({ card, isSavedFilms, handleLikeClick, handleCardDelete, savedMovies }) {
+  const defaultsaved = savedMovies.filter((m) => m.movieId === card.id).length > 0;
+  const [saved, setSaved] = useState(defaultsaved);
 
-  const handleDeleteCard = () => {
-    onDelete(movie);
-  };
+  function onCardClick() {
+    if (saved) {
+      handleCardDelete(card, setSaved);
+    } else {
+      handleLikeClick(card, saved, setSaved);
+    }
+  }
+
+  useEffect(() => {
+    if (card) {
+      if (card._id) {
+        setSaved(true);
+      } else {
+        setSaved(false);
+      }
+    }
+  }, [card]);
+
+  function onDelete() {
+    handleCardDelete(card);
+  }
 
   return (
-    <div className='card'>
-      <a href={movie.trailerLink} className="card__link" target="_blank" rel="noreferrer">
+    <li className="card">
+      <a className="card__link" href={card.trailerLink} target="_blank" rel="noreferrer">
         <img
-          src={isSavedMoviesPage ?
-            movie.image :
-            `https://api.nomoreparties.co/${movie.image.url}`
-          }
-          alt={`Обложка фильма: ${movie.nameRU}`}
-          className='card__image'
+          className="card__image"
+          alt={card.nameRU}
+          src={isSavedFilms ? card.image : `https://api.nomoreparties.co/${card.image.url}`}
         />
       </a>
-      <div className='card__container'> 
-        <div className="card__flex-row">
-          <p className="card__description">{movie.nameRU}</p>
-          {saved && !isSavedMoviesPage ?
-            <button type='button' className='card__save-icon' onClick={handleSaveCard} /> : (
-            <button className='card__delete-icon' type='button' onClick={handleDeleteCard} />
-            )
-          }
-        </div> 
-        <span className='card__duration'>{convertMinToHours(movie.duration)}</span>
+      <div className="card__container">
+        <figcaption className="card__flex-row">
+          <h2 className="card__description">{card.nameRU}</h2>
+          {isSavedFilms ? (
+          <button
+            type="button"
+            className="card__delete-icon"
+            onClick={onDelete}>
+          </button>
+        ) : (
+          <button
+            type="button"
+            className={`${saved ? 'card__save-icon card__save-icon_active' : 'card__save-icon'}`}
+            onClick={onCardClick} >
+          </button>
+        )}
+        </figcaption>
+        <p className="card__duration">{durationConverter(card.duration)}</p>
       </div>
-      
-    </div>
-  )
-};
+    </li>
+  );
+}
 
 export default MoviesCard;

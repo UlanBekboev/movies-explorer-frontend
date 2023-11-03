@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import Navigation from "../Navigation/Navigation";
 import './Header.css';
 
-const Header = ({ isLoggedIn }) => {
+const Header = ({ loggedIn }) => {
   const { pathname } = useLocation();
 
   return (
@@ -14,7 +14,7 @@ const Header = ({ isLoggedIn }) => {
       <Link to="/" className="header__logo">
         <img src={headerLogo} alt="Логотип страницы" className="logo"/>
       </Link>
-      <Navigation isLoggedIn={isLoggedIn}/>
+      <Navigation loggedIn={loggedIn}/>
     </header>
   ) 
 }

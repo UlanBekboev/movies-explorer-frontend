@@ -1,13 +1,15 @@
+import React from "react";
+import { NavLink, Link } from "react-router-dom";
+import close from '../../images/Group.svg';
 import './BurgerMenu.css';
-import close from '../../images/Group.svg'
-import { NavLink } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 
-function BurgerMenu({ onClose }) {
+function BurgerMenu({ closePopups }) {
+
   return (
     <div className="burger-menu">
       <div className="burger-menu__container">
-        <img src={close} alt="Кнопка закрыть меню" type="button" className="burger-menu__close" onClick={onClose}/>
+      <img src={close} alt="Кнопка закрыть меню" aria-label="закрыть"
+         type="button" className="burger-menu__close" onClick={closePopups}/>
         <nav className="burger-menu__content">
           <NavLink to="/" className={({isActive}) => `burger-menu__item ${isActive ? "burger-menu__item_active" : ""}`}>Главная</NavLink>
           <NavLink to="/movies" className={({isActive}) => `burger-menu__item ${isActive ? "burger-menu__item_active" : ""}`}>Фильмы</NavLink>
@@ -15,10 +17,10 @@ function BurgerMenu({ onClose }) {
         </nav>
         <Link to="/profile" className="burger-menu__account">
           Аккаунт
-         </Link>
+        </Link>
       </div>
     </div>
-  )
+  );
 }
 
 export default BurgerMenu;

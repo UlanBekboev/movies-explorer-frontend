@@ -1,79 +1,116 @@
-import { useEffect, useState } from 'react';
-import useScreenWidth from '../../hooks/useScreenWidth';
-import MoviesCard from '../MoviesCard/MoviesCard';
-
-import { checkSavedCard } from '../../utils/utils';
-
-import {
-  BIG_SCREEN_MOVIES_QTY,
-  MIDDLE_SCREEN_MOVIES_QTY,
-  SMALL_SCREEN_MOVIES_QTY,
-  MORE_MOVIES_BIG_SCREEN_QTY,
-  MORE_MOVIES_SMALL_SCREEN_QTY,
-  BIG_SCREEN,
-  SMALL_SCREEN
-} from '../../utils/constants';
-
+import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import './MoviesCardList.css';
+import MoviesCard from '../MoviesCard/MoviesCard';
+import Preloader from '../Preloader/Preloader';
+import SearchError from '../SearchError/SearchError';
+import { DESKTOP_VERSION, TABLET_VERSION, MOBILE_VERSION, DESKTOP, TABLET } from '../../utils/constants';
 
-const MoviesCardList = ({
-  movies,
+function MoviesCardList({
+  handleLikeClick,
+  handleCardDelete,
+  isLoading,
+  isNotFound,
+  isReqError,
+  isSavedFilms,
   savedMovies,
-  onSave,
-  onDelete,
-  isSavedMoviesPage
-}) => {
-  const [showMovieList, setShowMovieList] = useState(movies);
+  cards
+}) {
 
-  const screenWidth = useScreenWidth();
+  const [shownCards, setShownCards] = useState(0);
+  const { pathname } = useLocation();
 
-  const searchedMoviesCount = movies ? movies.length : 0;
+  function cardsCount() {
+    const display = window.innerWidth;
+    if (display > DESKTOP) {
+      setShownCards(16);
+    } else if (display > TABLET) {
+      setShownCards(9);
+    } else if (display < TABLET) {
+      setShownCards(5);
+    }
+  }
 
-  const handleMoreClick = () => {
-    if (screenWidth > BIG_SCREEN) {
-      setShowMovieList(movies.slice(0, showMovieList.length + MORE_MOVIES_BIG_SCREEN_QTY))
-    } else {
-      setShowMovieList(movies.slice(0, showMovieList.length + MORE_MOVIES_SMALL_SCREEN_QTY))
+  function showMoreCards() {
+    const display = window.innerWidth;
+    if (display > DESKTOP) {
+      setShownCards(shownCards + DESKTOP_VERSION);
+    } else if (display > TABLET) {
+      setShownCards(shownCards + TABLET_VERSION);
+    }
+    else if (display < TABLET) {
+      setShownCards(shownCards + MOBILE_VERSION);
     }
   }
 
   useEffect(() => {
-    if (screenWidth > BIG_SCREEN) {
-      setShowMovieList(movies.slice(0, BIG_SCREEN_MOVIES_QTY))
-    } else if (screenWidth > SMALL_SCREEN && screenWidth <= BIG_SCREEN) {
-      setShowMovieList(movies.slice(0, MIDDLE_SCREEN_MOVIES_QTY));
-    } else if (screenWidth <= SMALL_SCREEN) {
-      setShowMovieList(movies.slice(0, SMALL_SCREEN_MOVIES_QTY));
-    } else {
-      setShowMovieList(movies);
-    }
-  }, [screenWidth, movies])
+    cardsCount();
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      window.addEventListener('resize', cardsCount);
+    }, 500);
+  });
 
   return (
-    <section className='movies-list'>
-      <ul className='movies-list__cards'>
-        {showMovieList.sort().map(movie => {
-          return <MoviesCard
-            key={isSavedMoviesPage ? movie.movieId : movie.id}
-            movie={movie}
-            isSavedMoviesPage={isSavedMoviesPage}
-            onSave={onSave}
-            onDelete={onDelete}
-            saved={checkSavedCard(savedMovies, movie)}
-          />
-        })}
-      </ul>
-      {!isSavedMoviesPage && showMovieList && searchedMoviesCount !== showMovieList.length && (
-        <button
-          className="movies-list__button"
-          onClick={handleMoreClick}
-        >
-          Ещё
-        </button>
+    <section className="movies-list">
+      { isLoading && <Preloader /> }
+      { isNotFound && !isLoading && <SearchError errorText={'Ничего не найдено'} /> }
+      { isReqError && !isLoading && (
+        <SearchError
+          errorText={
+            'Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз'
+          }
+        />
+      )}
+      { !isLoading && !isReqError && !isNotFound && (
+        <>
+          {pathname === '/saved-movies' ? (
+            <>
+              <ul className="movies-list__cards">
+                {cards.map((card) => (
+                  <MoviesCard
+                    key={isSavedFilms ? card._id : card.id}
+                    handleLikeClick={handleLikeClick}
+                    card={card}
+                    cards={cards}
+                    handleCardDelete={handleCardDelete}
+                    isSavedFilms={isSavedFilms}
+                    savedMovies={savedMovies}
+                  />
+                ))}
+              </ul>
+            </>
+          ) : (
+            <>
+              <ul className="movies-list__cards">
+                {(!!cards) ? cards.slice(0, shownCards).map((card) => (
+                  <MoviesCard
+                    key={isSavedFilms ? card._id : card.id}
+                    handleLikeClick={handleLikeClick}
+                    card={card}
+                    cards={cards}
+                    handleCardDelete={handleCardDelete}
+                    isSavedFilms={isSavedFilms}
+                    savedMovies={savedMovies}
+                  />
+                )) : ""}
+              </ul>
+                {(!!cards && cards.length > shownCards) ? (
+                  <button className="movies-list__button" onClick={showMoreCards}>
+                    Ещё
+                  </button>
+                ) : (
+                  ''
+                )}
+            </>
+          )}
+        </>
       )}
     </section>
-  )
-};
+  );
+}
 
 export default MoviesCardList;
 

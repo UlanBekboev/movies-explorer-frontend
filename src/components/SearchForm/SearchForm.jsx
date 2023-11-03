@@ -1,66 +1,60 @@
-import { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import './SearchForm.css';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
-import useFormValidation from '../../hooks/useFormValidation';
-import { useLocation } from 'react-router-dom';
 import searchLogo from '../../images/find.svg';
 
-const SearchForm = ({
-  onSearchMovies,
-  onFilter,
-  disabled,
-  isSavedMoviesPage,
-  shortMovies,
-}) => {
-  const { enteredValues, handleChange, resetForm, isFormValid } = useFormValidation();
-  const location = useLocation();
-
-  function handleFormSubmit(e) {
-    e.preventDefault();
-    onSearchMovies(enteredValues.searchRequest, isFormValid, shortMovies);
-  }
-
-  function handleSavedMoviesFormSubmit(e) {
-    e.preventDefault()
-    onSearchMovies(enteredValues.searchRequest, shortMovies, resetForm);
-  }
+function SearchForm({ handleSearchMovies, onFilter, isShortMovies }) {
+  const [queryError, setQueryError] = useState(false);
+  const [movieQuery, setMovieQuery] = useState('');
+  const { pathname } = useLocation();
 
   useEffect(() => {
-    if (location.pathname === '/movies' && localStorage.getItem('movieSearch')) {
-      const searchValue = localStorage.getItem('movieSearch');
-      enteredValues.searchRequest = searchValue;
+    if (pathname === '/movies' && localStorage.getItem('movieSearch')) {
+      const localQuery = localStorage.getItem('movieSearch');
+      setMovieQuery(localQuery);
     }
-  }, [location]);
+  }, [pathname]);
+
+  function handleChangeQuery(e) {
+    setMovieQuery(e.target.value);
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (movieQuery.length === 0) {
+      setQueryError(true);
+    } else {
+      setQueryError(false);
+      handleSearchMovies(movieQuery);
+    }
+  }
 
   return (
-    <section className='search-form'>  
-      <form className='search__form__container' name='search-saved-movie-form' onSubmit={handleSavedMoviesFormSubmit} noValidate>
+    <section className="search-form">
+      <form className="search-form__container" id="form" onSubmit={handleSubmit}>
         <input
-          type='text'
-          placeholder='Фильм'
-          className='search-form__input'
-          required
-          name='searchRequest'
-          disabled={disabled}
-          value={enteredValues.searchRequest || ''}
-          onChange={handleChange}
-        />
-        <button
-          type='submit'
-          className='search-form__button'
-          disabled={disabled}
-        >
-          <img
+          name="query"
+          className="search-form__input"
+          id="search-input"
+          type="text"
+          placeholder="Фильм"
+          onChange={handleChangeQuery}
+          value={movieQuery || ''}
+          >
+        </input>
+        <button className="search-form__button" type="submit">
+        <img
             className="search-form__logo"
             src={searchLogo}
             alt="Логотип поиска: лупа"
           />
         </button>
       </form>
-
-      <FilterCheckbox isMovieFilter={shortMovies} onFilter={onFilter} disabled={disabled} />
+      <FilterCheckbox onFilter={onFilter} isShortMovies={isShortMovies} />
+      {queryError && <span className="search-form__error">Нужно ввести ключевое слово</span>}
     </section>
-  )
-};
+  );
+}
 
 export default SearchForm;

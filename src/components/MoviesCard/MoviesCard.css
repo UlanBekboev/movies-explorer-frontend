@@ -26,6 +26,12 @@
 
 .card__image {
   width: 100%;
+  max-height: 151px;
+  border-radius: 10px 10px 0 0;
+}
+
+.card__link {
+  line-height: 0;
 }
 
 .card__description {
@@ -72,13 +78,14 @@
 }
 
 .card__duration {
-  padding-left: 12px;
+  padding: 0 0 14px 12px;
   align-self: start;
   color: #A0A0A0;
   font-size: 11px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+  margin: 0;
 }
 
 @media screen and (max-width: 1024px) {  

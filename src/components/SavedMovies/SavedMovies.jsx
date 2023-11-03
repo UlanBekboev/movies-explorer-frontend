@@ -1,66 +1,46 @@
-import "./SavedMovies.css";
-import { useEffect, useState } from "react";
-import SearchForm from "../SearchForm/SearchForm";
-import MoviesCardList from "../MoviesCardList/MoviesCardList";
+import React, { useEffect, useState} from 'react';
+import './SavedMovies.css';
+import SearchForm from '../SearchForm/SearchForm';
+import MoviesCardList from '../MoviesCardList/MoviesCardList';
+import { filterMovies, durationFilter } from '../../utils/utils';
 
-function SavedMovies({ savedMovies, onMovieDelete }) {
-  const [isSearch, setIsSearch] = useState("");
-  const [foundShortMovies, setFoundShortMovies] = useState([]);
-  const [isShortMovies, setIsShortMovies] = useState(false);
-  const [isNotFound, setIsNotFound] = useState(false);
+function SavedMovies({ menuOpen, closePopups, loggedIn, handleMenuClick, handleCardDelete, savedMovies }) {
+  const [filteredMovies, setFilteredMovies] = useState(savedMovies); //отфильтрованные по запросу и чекбоксу
+  const [isShortMovies, setIsShortMovies] = useState(false); //включен ли чекбокс короткометражек
+  const [isNotFound, setIsNotFound] = useState(false); //фильмы по запросу не найдены
+  const [searchQuery, setSearchQuery] = useState('');
+
+  function handleSearchMovies(query) {
+    setSearchQuery(query);
+  }
 
   function handleShortMovies() {
     setIsShortMovies(!isShortMovies);
-    !isShortMovies
-      ? handleFilterMoviesDuration(savedMovies).length === 0
-        ? setFoundShortMovies(handleFilterMoviesDuration(savedMovies))
-        : setFoundShortMovies(handleFilterMoviesDuration(savedMovies))
-      : setFoundShortMovies(savedMovies);
-  }
-
-  function handleFilterMoviesDuration(movies) {
-    return movies.filter((movie) => movie.duration <= 52);
-  }
-
-  function handleMoviesSearch(search) {
-    setIsSearch(search);
-  }
-
-  function handleFilterMovies(movies, searchName) {
-    const search = searchName.toLowerCase().trim();
-    const result = movies.filter((movie) => {
-      const movieNameRU = String(movie.nameRU).toLowerCase().trim();
-      const movieNameEN = String(movie.nameEN).toLowerCase().trim();
-      return movieNameRU.includes(search) || movieNameEN.includes(search);
-    });
-    return result;
   }
 
   useEffect(() => {
-    foundShortMovies.length === 0 ? setIsNotFound(true) : setIsNotFound(false);
-  }, [foundShortMovies]);
+    const moviesList = filterMovies(savedMovies, searchQuery);
+    setFilteredMovies(isShortMovies ? durationFilter(moviesList) : moviesList);
+  }, [savedMovies, isShortMovies, searchQuery]);
 
   useEffect(() => {
-    const newMoviesList = handleFilterMovies(savedMovies, isSearch);
-    isShortMovies
-      ? setFoundShortMovies(handleFilterMoviesDuration(newMoviesList))
-      : setFoundShortMovies(newMoviesList);
-  }, [savedMovies, isShortMovies, isSearch]);
-
+    if (filteredMovies.length === 0) {
+      setIsNotFound(true);
+    } else {
+      setIsNotFound(false);
+    }
+  }, [filteredMovies]);
   return (
     <main className="saved-movies">
-      <SearchForm
-        onMoviesSearch={handleMoviesSearch}
-        onMoviesFilter={handleShortMovies}
-      />
-      <MoviesCardList
-        savedMovies={savedMovies}
-        cards={foundShortMovies}
-        isSavedMovies={true}
+        <SearchForm
+        onFilter={handleShortMovies}
+        handleSearchMovies={handleSearchMovies} />
+        <MoviesCardList
         isNotFound={isNotFound}
-        onMovieDelete={onMovieDelete}
-        buttonMore={true}
-      />
+        isSavedFilms={true}
+        cards={filteredMovies}
+        savedMovies={savedMovies}
+        handleCardDelete={handleCardDelete} />
     </main>
   );
 }

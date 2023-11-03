@@ -1,40 +1,88 @@
 import React from "react";
-import AuthForm from "../AuthForm/AuthForm";
-import { Navigate } from 'react-router-dom';
+import { Link, useLocation, Navigate } from "react-router-dom";
+import "../AuthForm/AuthForm.css";
+import logo from "../../images/logo (1).svg";
 import useFormValidation from "../../hooks/useFormValidation";
 
-
-function Login(props) {
+function Login({ onLogin, isLoading, loggedIn }) {
+  const { pathname } = useLocation();
   const { enteredValues, handleChange, errors, isFormValid } = useFormValidation();
 
   function handleSubmit(evt) {
     evt.preventDefault();
-    props.onLogin(enteredValues);
+    onLogin(enteredValues);
   }
 
-  if (props.isLoggedIn) {
+  if (loggedIn) {
     return <Navigate to="/movies" replace />;
   }
 
-
   return (
-    <>
-      <AuthForm
-        isLoggedIn={props.isLoggedIn}
-        onEmailChange={handleChange}
-        onPasswordChange={handleChange}
-        submit={handleSubmit}
-        email={enteredValues.email}
-        password={enteredValues.password}
-        error={errors.email || errors.password}
-        isValid={true}
-        title="Рады видеть!"
-        action="Войти"
-        question="Ещё не зарегистрированы?"
-        answer="Регистрация"
-        path="/sign-up"
-      />
-    </>
+    <section className="auth">
+      <div className="auth__content">
+        <Link to="/" className="auth__logo-link">
+          <img src={logo} alt="Логотип страницы" className="auth__logo" />
+        </Link>
+        <form
+          onSubmit={handleSubmit}
+          disabled={!isFormValid}
+          className="auth__form form"
+        >
+          <h1 className="auth__title">Рады видеть!</h1>
+          <label htmlFor="email" className="form__label">
+            E-mail
+          </label>
+          <input
+            id="email"
+            className="form__input"
+            onChange={handleChange}
+            placeholder="Email"
+            name="email"
+            type="email"
+            value={enteredValues.email || ""}
+            required
+            autoComplete="off"
+          />
+          {errors.email && (
+            <span className="form__error">{errors.email}</span>
+          )}
+          <label htmlFor="password" className="form__label">
+            Пароль
+          </label>
+          <input
+            id="password"
+            className="form__input"
+            onChange={handleChange}
+            placeholder="Пароль"
+            name="password"
+            type="password"
+            value={enteredValues.password || ""}
+            minLength={8}
+            maxLength={64}
+            required
+            autoComplete="off"
+          />
+          {errors.password && (
+            <span className="form__error_password">{errors.password}</span>
+          )}
+          <button
+            type="submit"
+            className={`form__button ${
+              pathname === "/sign-in" && "form__button-enter"
+            }`}
+            disabled={!isFormValid || isLoading}
+          >
+            Войти
+          </button>
+        </form>
+        <div className="auth__container">
+          <div className="auth__signed">Ещё не зарегистрированы?</div>
+          <Link to="/sign-up" className="auth__link">
+            Регистрация
+          </Link>
+        </div>
+      </div>
+    </section>
   );
 }
 

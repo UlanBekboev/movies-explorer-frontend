@@ -3,7 +3,7 @@ import './Navigation.css';
 import { Link, NavLink, useLocation } from "react-router-dom";
 import BurgerMenu from "../BurgerMenu/BurgerMenu";
 
-const Navigation = ({ isLoggedIn }) => {
+const Navigation = ({ loggedIn }) => {
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
   const { pathname } = useLocation();
 
@@ -16,7 +16,7 @@ const Navigation = ({ isLoggedIn }) => {
   }
 
   return (
-      isLoggedIn ? (
+    loggedIn ? (
         <nav className="nav">
           <ul className="nav__content">
             <li>
@@ -58,7 +58,7 @@ const Navigation = ({ isLoggedIn }) => {
               pathname === '/' 
                 && 'nav__burger-menu_light'
             }`} type="button" aria-label="Открыть меню" onClick={onOpenMenu}></button>
-            ) : <BurgerMenu onClose={handleCloseMenu} />}
+            ) : <BurgerMenu closePopups={handleCloseMenu} />}
         </nav>
     ) : (
         <ul className="nav__auth">
