@@ -8,6 +8,7 @@ function SearchForm({ handleSearchMovies, onFilter, isShortMovies }) {
   const [queryError, setQueryError] = useState(false);
   const [movieQuery, setMovieQuery] = useState('');
   const { pathname } = useLocation();
+  const [moviesFound, setMoviesFound] = useState(true); // Добавляем состояние для отслеживания наличия фильмов
 
   useEffect(() => {
     if (pathname === '/movies' && localStorage.getItem('movieSearch')) {
@@ -26,7 +27,7 @@ function SearchForm({ handleSearchMovies, onFilter, isShortMovies }) {
       setQueryError(true);
     } else {
       setQueryError(false);
-      handleSearchMovies(movieQuery);
+      handleSearchMovies(movieQuery, setMoviesFound); // Передаем функцию setMoviesFound для обновления состояния
     }
   }
 
@@ -41,10 +42,9 @@ function SearchForm({ handleSearchMovies, onFilter, isShortMovies }) {
           placeholder="Фильм"
           onChange={handleChangeQuery}
           value={movieQuery || ''}
-          >
-        </input>
+        />
         <button className="search-form__button" type="submit">
-        <img
+          <img
             className="search-form__logo"
             src={searchLogo}
             alt="Логотип поиска: лупа"
@@ -52,9 +52,11 @@ function SearchForm({ handleSearchMovies, onFilter, isShortMovies }) {
         </button>
       </form>
       <FilterCheckbox onFilter={onFilter} isShortMovies={isShortMovies} />
+      {!moviesFound && <span className="search-form__error">Фильмы по запросу не найдены</span>}
       {queryError && <span className="search-form__error">Нужно ввести ключевое слово</span>}
     </section>
   );
 }
 
 export default SearchForm;
+

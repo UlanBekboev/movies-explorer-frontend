@@ -14,7 +14,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding-bottom: 14px;
+  padding: 0;
 }
 
 .card__flex-row {
@@ -41,6 +41,10 @@
   font-style: normal;
   font-weight: 500;
   line-height: normal;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 206px;
 }
 
 .card__delete-icon {
@@ -78,7 +82,7 @@
 }
 
 .card__duration {
-  padding: 0 0 14px 12px;
+  padding: 0 0 0 12px;
   align-self: start;
   color: #A0A0A0;
   font-size: 11px;

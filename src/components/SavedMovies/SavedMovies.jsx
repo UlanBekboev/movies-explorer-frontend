@@ -4,7 +4,7 @@ import SearchForm from '../SearchForm/SearchForm';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import { filterMovies, durationFilter } from '../../utils/utils';
 
-function SavedMovies({ menuOpen, closePopups, loggedIn, handleMenuClick, handleCardDelete, savedMovies }) {
+function SavedMovies({ handleCardDelete, savedMovies }) {
   const [filteredMovies, setFilteredMovies] = useState(savedMovies); //отфильтрованные по запросу и чекбоксу
   const [isShortMovies, setIsShortMovies] = useState(false); //включен ли чекбокс короткометражек
   const [isNotFound, setIsNotFound] = useState(false); //фильмы по запросу не найдены
@@ -35,12 +35,17 @@ function SavedMovies({ menuOpen, closePopups, loggedIn, handleMenuClick, handleC
         <SearchForm
         onFilter={handleShortMovies}
         handleSearchMovies={handleSearchMovies} />
-        <MoviesCardList
-        isNotFound={isNotFound}
-        isSavedFilms={true}
-        cards={filteredMovies}
-        savedMovies={savedMovies}
-        handleCardDelete={handleCardDelete} />
+        {savedMovies.length === 0 ? (
+          <p className="saved-movies__message">Сохраненных фильмов нету</p>
+        ) : (
+          <MoviesCardList
+            isNotFound={isNotFound}
+            isSavedFilms={true}
+            cards={filteredMovies}
+            savedMovies={savedMovies}
+            handleCardDelete={handleCardDelete}
+          />
+        )}
     </main>
   );
 }

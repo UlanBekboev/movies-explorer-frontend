@@ -101,7 +101,8 @@ function Movies({
         <SearchForm
           handleSearchMovies={handleSearchMovies}
           onFilter={handleShortMovies}
-          isShortMovies={isShortMovies} />
+          isShortMovies={isShortMovies}
+          savedMovies={savedMovies} />
         <MoviesCardList
           handleLikeClick={handleLikeClick}
           handleCardDelete={handleCardDelete}
@@ -119,3 +120,4 @@ function Movies({
 export default Movies;
 
 
+ 
