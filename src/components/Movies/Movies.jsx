@@ -72,8 +72,8 @@ function Movies({
   }, []);
 
   useEffect(() => {
-    if (localStorage.getItem('allMovies')) {
-      const movies = JSON.parse(localStorage.getItem('allMovies'));
+    if (localStorage.getItem('movies')) {
+      const movies = JSON.parse(localStorage.getItem('movies'));
       setInitialMovies(movies);
       if (localStorage.getItem('shortMovies') === 'true') {
         setFilteredMovies(durationFilter(movies));

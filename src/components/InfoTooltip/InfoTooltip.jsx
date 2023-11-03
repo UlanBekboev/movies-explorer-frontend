@@ -40,42 +40,23 @@ const InfoTooltip = ({ isOpen, onClose, onSuccess }) => {
       onClick={handleOverlay}
     >
       <div className={`popup__container popup__container_type_infoTool`}>
-        { 'form__button' ? (
-          <>
-            <img
-              src={onSuccess ? successIcon : unsuccessIcon}
-              alt={
-                onSuccess ? "Регистрация прошла успешно" : "Регистрация не прошла"
-              }
-              className="popup__signup-icon"
-            />
-            <h3 className="popup__signup-title">
-              {onSuccess
-                ? "Вы успешно зарегистрировались!"
-                : "Что-то пошло не так! Попробуйте ещё раз."}
-            </h3>
-          </>
-        ) : (
-          <>
-            <img
-              src={onSuccess ? successIcon : unsuccessIcon}
-              alt={
-                onSuccess ? "Данные профиля обновлены" : "Данные профиля не обновлены"
-              }
-              className="popup__signup-icon"
-            />
-            <h3 className="popup__signup-title">
-              {onSuccess
-                ? "Данные профиля обновлены"
-                : "Что-то пошло не так! Попробуйте ещё раз."}
-            </h3>
-          </>
-        )}
-        {<button
+        <>
+          <img
+            src={onSuccess ? successIcon : unsuccessIcon}
+            alt={onSuccess ? "Операция прошла успешно" : "Операция не прошла"}
+            className="popup__signup-icon"
+          />
+          <h3 className="popup__signup-title">
+            {onSuccess
+              ? "Операция прошла успешно"
+              : "Что-то пошло не так! Попробуйте ещё раз."}
+          </h3>
+        </>
+        <button
           className="popup__close"
           type="button"
           onClick={onClose}
-        ></button>}
+        ></button>
       </div>
     </div>
   );
