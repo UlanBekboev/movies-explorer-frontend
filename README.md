@@ -6,6 +6,9 @@
 
 ## Ссылки на проект
 
+## Ссылки на Пулреквест: https://github.com/UlanBekboev/movies-explorer-frontend/pull/3
+## Ссылки на Домен: https://moviestar.nomoredomainsrocks.ru
+
 Light-2
 
 Ссылка на макет: https://www.figma.com/file/6FMWkB94wE7KTkcCgUXtnC/Дипломный-проект?node-id=1%3A950&mode=dev
