@@ -3,8 +3,8 @@ import './MoviesCard.css';
 import { durationConverter } from "../../utils/utils";
 
 function MoviesCard({ card, isSavedFilms, handleLikeClick, handleCardDelete, savedMovies }) {
-  const defaultsaved = savedMovies.filter((m) => m.movieId === card.id).length > 0;
-  const [saved, setSaved] = useState(defaultsaved);
+  const isMovieSaved = savedMovies.some((movie) => movie.movieId === card.id);
+  const [saved, setSaved] = useState(isMovieSaved);
 
   function onCardClick() {
     if (saved) {
@@ -15,14 +15,12 @@ function MoviesCard({ card, isSavedFilms, handleLikeClick, handleCardDelete, sav
   }
 
   useEffect(() => {
-    if (card) {
-      if (card._id) {
-        setSaved(true);
-      } else {
-        setSaved(false);
-      }
+    if (savedMovies.some((movie) => movie.movieId === card.id)){
+      setSaved(true);
+    } else {
+      setSaved(false);
     }
-  }, [card]);
+  }, [savedMovies, card.id]);
 
   function onDelete() {
     handleCardDelete(card);

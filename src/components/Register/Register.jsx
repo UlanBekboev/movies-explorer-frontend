@@ -87,8 +87,11 @@ function Register({ onRegistr, loggedIn, isLoading }) {
           )}
           <button
             type="submit"
-            className={`form__button ${pathname === "/sign-in" && "form__button-enter"}`}
-            disabled={!isFormValid || isLoading}
+            className={!isFormValid || isLoading
+              ? "form__button_inactive"
+              : "form__button"}
+            disabled={!isFormValid}
+            //disabled={!isFormValid ? true : false}
           >
             Зарегистрироваться
           </button>

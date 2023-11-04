@@ -67,10 +67,10 @@ function Login({ onLogin, isLoading, loggedIn }) {
           )}
           <button
             type="submit"
-            className={`form__button ${
-              pathname === "/sign-in" && "form__button-enter"
-            }`}
-            disabled={!isFormValid || isLoading}
+            className={!isFormValid || isLoading
+              ? "form__button_inactive"
+              : "form__button"}
+            disabled={!isFormValid && "form__button_inactive"}
           >
             Войти
           </button>

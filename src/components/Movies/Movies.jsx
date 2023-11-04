@@ -4,6 +4,8 @@ import SearchForm from '../SearchForm/SearchForm';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import * as movies from '../../utils/MoviesApi';
 import { filterMovies, durationFilter } from '../../utils/utils';
+import SearchError from '../SearchError/SearchError';
+import Preloader from '../Preloader/Preloader';
 
 function Movies({
   handleLikeClick,
@@ -84,35 +86,32 @@ function Movies({
   }, []);
 
   useEffect(() => {
-    if (localStorage.getItem('movieSearch')) {
-      if (filteredMovies.length === 0) {
+    if (!localStorage.getItem('movieSearch') ) {
         setIsNotFound(true);
       } else {
         setIsNotFound(false);
       }
-    } else {
-      setIsNotFound(false);
-    }
+      console.log(isNotFound)
   }, [filteredMovies]);
-
 
   return (
     <section className="movies">
-        <SearchForm
+          <SearchForm
           handleSearchMovies={handleSearchMovies}
           onFilter={handleShortMovies}
           isShortMovies={isShortMovies}
-          savedMovies={savedMovies} />
-        <MoviesCardList
-          handleLikeClick={handleLikeClick}
-          handleCardDelete={handleCardDelete}
-          savedMovies={savedMovies}
-          cards={filteredMovies}
-          isSavedFilms={false}
-          isLoading={isLoading}
-          isReqError={isReqError}
-          isNotFound={isNotFound}
-        />
+          savedMovies={savedMovies} /> 
+          <MoviesCardList
+            handleLikeClick={handleLikeClick}
+            handleCardDelete={handleCardDelete}
+            savedMovies={savedMovies}
+            cards={filteredMovies}
+            isSavedFilms={false}
+            isLoading={isLoading}
+            isReqError={isReqError}
+            isNotFound={isNotFound}
+          />
+        
     </section>
   );
 }

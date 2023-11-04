@@ -30,6 +30,7 @@
 
 .movies-list__button {
   max-width: 1140px;
+  width: 100%;
   height: 36px;
   border-radius: 6px;
   background: #F9F9F9;

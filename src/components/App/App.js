@@ -232,6 +232,8 @@ function App() {
             </>
           }/>
           <Route path="/profile" element={
+            <>
+            <Header loggedIn={loggedIn}/>
             <ProtectedRoute
               element={Profile}
               loggedIn={loggedIn}
@@ -241,6 +243,7 @@ function App() {
               handleUpdateUser={handleUpdateUser}
               handleSignOut={handleSignOut}
             />
+            </>
           }/>
           <Route path="/sign-in" element={
             <Login loggedIn={loggedIn}
@@ -249,6 +252,7 @@ function App() {
            } />          
           <Route exact path='/sign-up' element={
             <Register onRegistr={handleRegisterSubmit}
+            loggedIn={loggedIn}
             isLoading={isLoading} />
           } />
           <Route path="*" element={

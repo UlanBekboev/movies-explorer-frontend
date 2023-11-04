@@ -4,7 +4,7 @@ import './MoviesCardList.css';
 import MoviesCard from '../MoviesCard/MoviesCard';
 import Preloader from '../Preloader/Preloader';
 import SearchError from '../SearchError/SearchError';
-import { DESKTOP_VERSION, TABLET_VERSION, MOBILE_VERSION, DESKTOP, TABLET } from '../../utils/constants';
+import { DESKTOP_VERSION, TABLET_VERSION, MOBILE_VERSION, DESKTOP, TABLET, MINITABLET } from '../../utils/constants';
 
 function MoviesCardList({
   handleLikeClick,
@@ -14,7 +14,7 @@ function MoviesCardList({
   isReqError,
   isSavedFilms,
   savedMovies,
-  cards
+  cards,
 }) {
 
   const [shownCards, setShownCards] = useState(0);
@@ -25,7 +25,9 @@ function MoviesCardList({
     if (display > DESKTOP) {
       setShownCards(16);
     } else if (display > TABLET) {
-      setShownCards(9);
+      setShownCards(12);
+    }  else if (display > MINITABLET) {
+        setShownCards(8);
     } else if (display < TABLET) {
       setShownCards(5);
     }
@@ -45,6 +47,7 @@ function MoviesCardList({
 
   useEffect(() => {
     cardsCount();
+    console.log(isNotFound)
   }, []);
 
   useEffect(() => {
@@ -55,16 +58,18 @@ function MoviesCardList({
 
   return (
     <section className="movies-list">
-      { isLoading && <Preloader /> }
-      { isNotFound && !isLoading && <SearchError errorText={'Ничего не найдено'} /> }
-      { isReqError && !isLoading && (
-        <SearchError
-          errorText={
-            'Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз'
-          }
-        />
-      )}
-      { !isLoading && !isReqError && !isNotFound && (
+      {isLoading && cards.length === 0 && <Preloader />}
+        {!isLoading && isNotFound && (
+          <p className="movies-cards__search-error">Ничего не найдено.</p>
+        )}
+        {!isLoading && isReqError && (
+          <p className="movies-cards__search-error">
+            Во&nbsp;время запроса произошла ошибка. Возможно, проблема
+            с&nbsp;соединением или сервер недоступен. Подождите немного
+            и&nbsp;попробуйте ещё раз.
+          </p>
+        )}
+        {!isLoading && !isReqError && !isNotFound && (
         <>
           {pathname === '/saved-movies' ? (
             <>

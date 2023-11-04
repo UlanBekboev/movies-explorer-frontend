@@ -3,8 +3,11 @@
   margin: 0 auto;
 }
 
-/* @media screen and (max-width: 768px) {
-  .movies {
-    padding: 0 3.9% 0 3.9%;
-  }
-} */
+.movies-cards__search-error {
+  color: #000;
+  font-size: 20px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 20px;
+  text-align: center;
+}
