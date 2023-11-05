@@ -15,6 +15,7 @@ function MoviesCardList({
   isSavedFilms,
   savedMovies,
   cards,
+  query
 }) {
 
   const [shownCards, setShownCards] = useState(0);
@@ -45,16 +46,32 @@ function MoviesCardList({
     }
   }
 
+   useEffect(() => {
+    const display = window.innerWidth;
+    if (display > DESKTOP) {
+      setShownCards(16);
+    } else if (display > TABLET) {
+      setShownCards(12);
+    }  else if (display > MINITABLET) {
+        setShownCards(8);
+    } else if (display < TABLET) {
+      setShownCards(5);
+    };
+  }, [query]); 
+
   useEffect(() => {
     cardsCount();
-    console.log(isNotFound)
   }, []);
 
   useEffect(() => {
-    setTimeout(() => {
-      window.addEventListener('resize', cardsCount);
-    }, 500);
-  });
+    const handleResize = () => {
+      cardsCount();
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
     <section className="movies-list">

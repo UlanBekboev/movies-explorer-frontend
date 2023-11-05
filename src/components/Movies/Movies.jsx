@@ -22,6 +22,11 @@ function Movies({
   function handleFilterMovies(movies, query, short) {
     const moviesList = filterMovies(movies, query, short);
     setInitialMovies(moviesList);
+    if (moviesList.length === 0) {
+      setIsNotFound(true)
+    } else {
+      setIsNotFound(false);
+    };
     setFilteredMovies(short ? durationFilter(moviesList) : moviesList);
     localStorage.setItem('movies', JSON.stringify(moviesList));
     localStorage.setItem('allMovies', JSON.stringify(movies));
@@ -85,15 +90,6 @@ function Movies({
     }
   }, []);
 
-  useEffect(() => {
-    if (!localStorage.getItem('movieSearch') ) {
-        setIsNotFound(true);
-      } else {
-        setIsNotFound(false);
-      }
-      console.log(isNotFound)
-  }, [filteredMovies]);
-
   return (
     <section className="movies">
           <SearchForm
@@ -110,6 +106,7 @@ function Movies({
             isLoading={isLoading}
             isReqError={isReqError}
             isNotFound={isNotFound}
+            query={localStorage.getItem('movieSearch')}
           />
         
     </section>
