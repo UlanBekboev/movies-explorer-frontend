@@ -61,6 +61,7 @@ function Register({ onRegistr, loggedIn, isLoading }) {
             placeholder="Email"
             name="email"
             type="email"
+            pattern="^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$"
             value={enteredValues.email || ""}
             required
             autoComplete="off"
